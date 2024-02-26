@@ -97,7 +97,7 @@ class LoginPage extends StatelessWidget {
             },
             controller: _usernameController,
             cursorColor: AppColors.white,
-            prefixIcon: const Icon(Icons.person),
+            prefixIcon: Icon(Icons.person, color: AppColors.white),
             hintText: 'Enter user name',
             label: Custom.text(
               text: "User Name",
@@ -127,7 +127,7 @@ class LoginPage extends StatelessWidget {
             },
             controller: _emailController,
             cursorColor: AppColors.white,
-            prefixIcon: const Icon(Icons.email_outlined),
+            prefixIcon: Icon(Icons.email_outlined, color: AppColors.white),
             hintText: 'Enter your email',
             label: Custom.text(
               text: "EMAIL",
@@ -164,7 +164,7 @@ class LoginPage extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
             cursorColor: AppColors.white,
-            prefixIcon: const Icon(Icons.lock_outlined),
+            prefixIcon: Icon(Icons.lock_outlined, color: AppColors.white),
           ),
           if (_passwordError != null)
             Text(
