@@ -1,85 +1,83 @@
-// ignore_for_file: avoid_print, must_be_immutable
-import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../utils/constants/colors.dart';
-import '../../utils/shared/custom_widgets.dart';
+import '../../utils/shared/custom_widgits.dart';
 import '../../viewmodels/login_viewmodel.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
-  final LoginViewModel _loginViewModel = Get.put(LoginViewModel());
+  final LoginViewModel getLogin = Get.put(LoginViewModel());
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  // final TextEditingController _usernameController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _passwordController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
+  // final _formKey = GlobalKey<FormState>();
 
-  String? _usernameError;
-  String? _emailError;
-  String? _passwordError;
+  // String? _usernameError;
+  // String? _emailError;
+  // String? _passwordError;
 
   @override
   Widget build(BuildContext context) {
-    var mediaWidth = MediaQuery.of(context).size.width;
-    var mediaHeight = MediaQuery.of(context).size.height;
-
-    return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 18),
-                loginImage(mediaHeight),
-                const SizedBox(height: 36),
-                Custom.text(
-                  text: "Login",
-                  fontSize: 40,
-                  fontWeight: FontWeight.w600,
-                ),
-                const SizedBox(height: 12),
-                Custom.text(
-                  text: "Please sign in to continue",
-                  fontSize: 16,
-                  fontWeight: FontWeight.w400,
-                ),
-                const SizedBox(height: 38),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      userNameTextField(),
-                      emailTextField(),
-                      passwordTextField(),
-                    ],
+    return GetBuilder<LoginViewModel>(builder: (controller) {
+      return Scaffold(
+        backgroundColor: AppColors.primaryColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 18),
+                  loginImage(),
+                  const SizedBox(height: 36),
+                  Custom.text(
+                    text: "Login",
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
                   ),
-                ),
-                const SizedBox(height: 6),
-                loginButton(mediaWidth),
-                forgotPasswordButton(mediaWidth),
-                newAccountSignup(),
-              ],
+                  const SizedBox(height: 12),
+                  Custom.text(
+                    text: "Please sign in to continue",
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  const SizedBox(height: 38),
+                  Form(
+                    key: getLogin.formKey,
+                    child: Column(
+                      children: [
+                        userNameTextField(),
+                        emailTextField(),
+                        passwordTextField(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  loginButton(),
+                  forgotPasswordButton(),
+                  newAccountSignup(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  Center loginImage(double mediaHeight) {
+  Center loginImage() {
     return Center(
-      child: SizedBox(
-        height: mediaHeight * 0.18,
-        child: const Placeholder(), // Your SVG picture widget here
+      child: Icon(
+        CupertinoIcons.burn,
+        size: 18.h,
       ),
     );
   }
@@ -91,10 +89,10 @@ class LoginPage extends StatelessWidget {
         children: [
           Custom.textField(
             validator: (value) {
-              _usernameError = validateUsername(value);
+              getLogin.validateUsername(value);
               return null;
             },
-            controller: _usernameController,
+            controller: getLogin.usernameController,
             cursorColor: AppColors.white,
             prefixIcon: Icon(Icons.person, color: AppColors.white),
             hintText: 'Enter user name',
@@ -104,11 +102,6 @@ class LoginPage extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
           ),
-          if (_usernameError != null)
-            Text(
-              _usernameError!,
-              style: const TextStyle(color: Colors.red),
-            ),
         ],
       ),
     );
@@ -121,10 +114,10 @@ class LoginPage extends StatelessWidget {
         children: [
           Custom.textField(
             validator: (value) {
-              _emailError = validateEmail(value);
+              getLogin.validateEmail(value);
               return null;
             },
-            controller: _emailController,
+            controller: getLogin.emailController,
             cursorColor: AppColors.white,
             prefixIcon: Icon(Icons.email_outlined, color: AppColors.white),
             hintText: 'Enter your email',
@@ -134,11 +127,6 @@ class LoginPage extends StatelessWidget {
               fontWeight: FontWeight.w400,
             ),
           ),
-          if (_emailError != null)
-            Text(
-              _emailError!,
-              style: const TextStyle(color: Colors.red),
-            ),
         ],
       ),
     );
@@ -151,10 +139,10 @@ class LoginPage extends StatelessWidget {
         children: [
           Custom.textField(
             validator: (value) {
-              _passwordError = validatePassword(value);
+              getLogin.validatePassword(value);
               return null;
             },
-            controller: _passwordController,
+            controller: getLogin.passwordController,
             obscureText: true,
             hintText: 'Enter your password',
             label: Custom.text(
@@ -165,32 +153,18 @@ class LoginPage extends StatelessWidget {
             cursorColor: AppColors.white,
             prefixIcon: Icon(Icons.lock_outlined, color: AppColors.white),
           ),
-          if (_passwordError != null)
-            Text(
-              _passwordError!,
-              style: const TextStyle(color: Colors.red),
-            ),
         ],
       ),
     );
   }
 
-  TextButton loginButton(double mediaWidth) {
+  TextButton loginButton() {
     return TextButton(
-      onPressed: () {
-        if (_formKey.currentState?.validate() == true) {
-          print('Username: ${_usernameController.text}');
-          print('Email: ${_emailController.text}');
-          print('Password: ${_passwordController.text}');
-          login(_loginViewModel);
-          // Navigator.pushReplacement(context,
-          //     MaterialPageRoute(builder: (context) => const HomePage()));
-        }
-      },
+      onPressed: () => getLogin.loginButton(),
       style: TextButton.styleFrom(
         backgroundColor: AppColors.green,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(600)),
-        minimumSize: Size(mediaWidth / 1.7, 70),
+        minimumSize: Size(58.w, 70),
       ),
       child: Custom.text(
         text: "LOGIN",
@@ -202,22 +176,13 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  TextButton forgotPasswordButton(double mediaWidth) {
-    return TextButton(
-      onPressed: () {},
-      style: TextButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(600)),
-        minimumSize: Size(mediaWidth / 9, 0),
-        surfaceTintColor: Colors.transparent,
-        splashFactory: NoSplash.splashFactory,
-      ),
-      child: Custom.text(
-        text: "Forgot Password?",
-        textAlign: TextAlign.center,
-        fontSize: 16,
-        colors: AppColors.green,
-        fontWeight: FontWeight.w600,
-      ),
+  Widget forgotPasswordButton() {
+    return Custom.text(
+      text: "Forgot Password?",
+      textAlign: TextAlign.center,
+      fontSize: 16,
+      colors: AppColors.green,
+      fontWeight: FontWeight.w600,
     );
   }
 
@@ -242,58 +207,5 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String? validateUsername(String? username) {
-    if (username == null || username.isEmpty) {
-      return 'Username is required';
-    }
-    return null;
-  }
-
-  /// email is 'eve.holt@reqres.in'
-  String? validateEmail(String? email) {
-    if (email == null || email.isEmpty) {
-      return 'Email is required';
-    } else if (!RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$')
-        .hasMatch(email)) {
-      return 'Invalid email format';
-    }
-    return null;
-  }
-
-// password is 'pistol'
-  String? validatePassword(String? password) {
-    if (password == null || password.isEmpty) {
-      return 'Password is required';
-    } else if (password != 'pistol' &&
-        !RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,16}$')
-            .hasMatch(password)) {
-      return 'Invalid password format';
-    }
-    return null;
-  }
-
-  void login(loginViewModel) async {
-    try {
-      http.Response response = await http.post(
-        Uri.parse('https://reqres.in/api/login'),
-        body: jsonEncode({
-          'email': _emailController.text,
-          'password': _passwordController.text,
-        }),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        print("token for login is: ${data['token']}");
-        print('login successfully');
-      } else {
-        print('Login failed, status_code => ${response.statusCode}');
-      }
-    } catch (error) {
-      print(error.toString());
-    }
   }
 }
