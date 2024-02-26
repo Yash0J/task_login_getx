@@ -14,10 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-          // Your theme data
-          ),
-      initialRoute: '/login',
+            initialRoute: '/login',
       getPages: [
         GetPage(name: '/login', page: () => LoginPage()),
       ],
